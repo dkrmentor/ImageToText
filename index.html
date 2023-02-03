@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='tesseract.min.js'></script>
+
+  <title>Image to Text Converter</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #upload-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 300px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      background-color: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    #resultContainer {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 20px;
+      width: 300px;
+      text-align: center;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="upload-container">
+    <input type="file" id="imageUpload" />
+    <img id="image-display" style="display:none" />
+    <button id="convertBtn">Convert</button>
+    <div id="resultContainer"></div>
+  </div>
+</body>
+<script>
+  const imageUpload = document.getElementById("imageUpload");
+  const convertBtn = document.getElementById("convertBtn");
+  const resultContainer = document.getElementById("resultContainer");
+  const imageDisplay = document.getElementById("image-display");
+
+  imageUpload.addEventListener("change", () => {
+    const image = imageUpload.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      imageDisplay.src = e.target.result;
+    };
+    reader.readAsDataURL(image);
+    imageDisplay.style.display = "block";
+  });
+
+  convertBtn.addEventListener("click", async () => {
+    console.log(imageUpload.files);
+    const image = imageUpload.files[0];
+    console.log(image);
+    if (!image) {
+      return alert("No image selected");
+    }
+
+    const imageType = image.type;
+    if (!/^image\//.test(imageType)) {
+      return alert("Not an image");
+    }
+
+    const imageText = await Tesseract.recognize(image);
+    console.log("*********************")
+    console.log(imageText);
+    console.log("*********************")
+    console.log(imageText.data.text);
+    console.log("*********************")
+    console.log(imageText.text);
+    resultContainer.innerHTML = imageText.data.text;
+  });
+
+</script>
+
+</html>
